@@ -1,5 +1,6 @@
 from lightning.pytorch.callbacks import Callback
 from lightning import LightningModule, Trainer
+import torch.nn.functional as F
 import torch
 import torchvision
 import os
@@ -17,7 +18,6 @@ class GenerateCallback(Callback):
         self.target_imgs = None
 
     def on_train_start(self, trainer: Trainer, pl_module: LightningModule) -> None:
-        return
         dataloader = trainer.val_dataloaders
         self.input_imgs, self.target_imgs = next(iter(dataloader))
         self.input_imgs = self.input_imgs.to(pl_module.device)
@@ -25,15 +25,15 @@ class GenerateCallback(Callback):
         self.save_dir = os.path.join(trainer.log_dir, 'figures')
 
     def on_train_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
-        return
         if trainer.current_epoch % self.every_n_epochs == 0:
             # Reconstruct images
             with torch.no_grad():
                 pl_module.eval()
-                reconst_imgs = pl_module(self.input_imgs)
+                reconst_imgs = pl_module(self.input_imgs, 3)
                 pl_module.train()
             # Plot and add to tensorboard
-            imgs = torch.stack([self.input_imgs, self.target_imgs, reconst_imgs], dim=1).flatten(0, 1)
+            input_imgs = F.interpolate(self.input_imgs, size=self.target_imgs.shape[-2:], mode='bicubic')
+            imgs = torch.stack([input_imgs, reconst_imgs, self.target_imgs], dim=1).flatten(0, 1)
             grid = torchvision.utils.make_grid(imgs, nrow=3)
             # Save image
             save_path = os.path.join(self.save_dir, f"reconst_{trainer.current_epoch}.png")
@@ -41,7 +41,6 @@ class GenerateCallback(Callback):
             torchvision.utils.save_image(grid, save_path)
 
     def on_test_start(self, trainer: Trainer, pl_module: LightningModule) -> None:
-        return
         dataloader = trainer.test_dataloaders
         self.input_imgs, self.target_imgs = next(iter(dataloader))
         self.input_imgs = self.input_imgs.to(pl_module.device)
@@ -49,15 +48,15 @@ class GenerateCallback(Callback):
         self.save_dir = os.path.join(trainer.log_dir, 'figures')
 
     def on_test_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
-        return
         if trainer.current_epoch % self.every_n_epochs == 0:
             # Reconstruct images
             with torch.no_grad():
                 pl_module.eval()
-                reconst_imgs = pl_module(self.input_imgs)
+                reconst_imgs = pl_module(self.input_imgs, 3)
                 pl_module.train()
             # Plot and add to tensorboard
-            imgs = torch.stack([self.input_imgs, self.target_imgs, reconst_imgs], dim=1).flatten(0, 1)
+            input_imgs = F.interpolate(self.input_imgs, size=self.target_imgs.shape[-2:], mode='bicubic')
+            imgs = torch.stack([input_imgs, reconst_imgs, self.target_imgs], dim=1).flatten(0, 1)
             grid = torchvision.utils.make_grid(imgs, nrow=3)
             # Save image
             save_path = os.path.join(self.save_dir, f"test_{trainer.current_epoch}.png")

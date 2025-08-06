@@ -7,6 +7,7 @@ from torchvision.transforms.v2 import (
     ToImage,
     ToDtype,
     CenterCrop,
+    RandomCrop,
 )
 from torch.utils.data import DataLoader
 from typing import Tuple
@@ -95,17 +96,16 @@ class ImgDataModule(L.LightningDataModule):
 
         self.image_train_transform = Compose([
             ToImage(),
-            # CenterCrop(512),
+            RandomCrop(180),
             ToDtype(dtype=torch.float32, scale=True),
         ])
         self.image_val_transform = Compose([
             ToImage(),
-            # CenterCrop(1024),
+            RandomCrop(180),
             ToDtype(dtype=torch.float32, scale=True),
         ])
         self.image_test_transform = Compose([
             ToImage(),
-            # CenterCrop(512),
             ToDtype(dtype=torch.float32, scale=True),
         ])
         self.num_workers = num_workers

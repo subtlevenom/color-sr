@@ -1,5 +1,6 @@
 import torch
 from torch.utils.data import Dataset
+import torch.nn.functional as F
 from color_sr.ml.utils.io import read_rgb_image
 from typing import List
 from torchvision.transforms.v2 import Compose
@@ -15,18 +16,20 @@ class Image2ImageDataset(Dataset):
         self.p_transform = p_transform
 
     def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
-        path = self.paths_a[idx]
-        x = read_rgb_image(path)
-        if self.transform is not None:
-            x = self.transform(x)
-
         path = self.paths_b[idx]
         y = read_rgb_image(path)
         if self.transform is not None:
             y = self.transform(y)
 
-        if self.p_transform is not None:
-            x, y = self.p_transform(x, y)
+        size=(y.shape[-2] // 3, y.shape[-1] // 3)
+        x = F.interpolate(y.unsqueeze(0), size=size, mode='bicubic').squeeze(0)
+        # path = self.paths_b[idx]
+        # y = F.in read_rgb_image(path)
+        # if self.transform is not None:
+            # y = self.transform(y)
+
+        # if self.p_transform is not None:
+            # x, y = self.p_transform(x, y)
 
         return x, y
 
