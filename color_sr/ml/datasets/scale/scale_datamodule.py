@@ -72,12 +72,12 @@ class ScaleDataModule(L.LightningDataModule):
 
         self.image_train_transform = Compose([
             ToImage(),
-            RandomCrop(900),
+            RandomCrop(400),
             ToDtype(dtype=torch.float32, scale=True),
         ])
         self.image_val_transform = Compose([
             ToImage(),
-            RandomCrop(900),
+            RandomCrop(400),
             ToDtype(dtype=torch.float32, scale=True),
         ])
         self.image_test_transform = Compose([
