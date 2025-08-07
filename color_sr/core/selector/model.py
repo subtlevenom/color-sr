@@ -18,8 +18,8 @@ class ModelSelector:
                 head_config = config.model.params.head
                 return DETrEncoder(
                     in_channels=encoder_config.in_channels,
-                    hs_channels=encoder_config.out_channels,
-                    mem_channels=head_config.in_channels,
+                    mem_channels=encoder_config.out_channels,
+                    hs_channels=head_config.in_channels,
                     d_model=encoder_config.d_model,
                     nhead=encoder_config.nhead,
                     num_decoder_layers=encoder_config.num_decoder_layers,
@@ -47,6 +47,6 @@ class ModelSelector:
             case ModelType.gsr_kan:
                 head = ModelSelector.head(config)
                 encoder = ModelSelector.encoder(config)
-                return GSRKanModel(encoder=encoder, head=head)
+                return GSRKanModel(encoder=encoder, head=head, scale = config.data.scale)
             case _:
                 raise ValueError(f'Unupported model type f{config.model.type}')

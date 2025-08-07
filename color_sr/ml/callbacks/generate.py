@@ -29,7 +29,7 @@ class GenerateCallback(Callback):
             # Reconstruct images
             with torch.no_grad():
                 pl_module.eval()
-                reconst_imgs = pl_module(self.input_imgs, 3)
+                reconst_imgs = pl_module(self.input_imgs)
                 pl_module.train()
             # Plot and add to tensorboard
             input_imgs = F.interpolate(self.input_imgs, size=self.target_imgs.shape[-2:], mode='bicubic')
@@ -52,7 +52,7 @@ class GenerateCallback(Callback):
             # Reconstruct images
             with torch.no_grad():
                 pl_module.eval()
-                reconst_imgs = pl_module(self.input_imgs, 3)
+                reconst_imgs = pl_module(self.input_imgs)
                 pl_module.train()
             # Plot and add to tensorboard
             input_imgs = F.interpolate(self.input_imgs, size=self.target_imgs.shape[-2:], mode='bicubic')

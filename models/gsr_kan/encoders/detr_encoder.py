@@ -16,8 +16,8 @@ class DETrEncoder(nn.Module):
 
     def __init__(self,
                  in_channels: int = 3,
-                 hs_channels: int = 60,
-                 mem_channels: int = 2,
+                 hs_channels: int = 2,
+                 mem_channels: int = 60,
                  d_model: int = 256,
                  nhead=6,
                  num_decoder_layers=6,
@@ -55,6 +55,9 @@ class DETrEncoder(nn.Module):
     def forward(self, x: torch.Tensor):
 
         features = self.backbone(x)
+        mem = self.proj_mem(features)
+        return {'w':mem, 'v':None}
+
         B, C, H, W = features.shape
         features = rearrange(features, 'b (c i j) h w -> (b h w) c i j', i=self.K, j=self.K)
         query_embed = self.query_embed.weight

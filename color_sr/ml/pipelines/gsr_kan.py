@@ -76,7 +76,7 @@ class GSRKanPipeline(L.LightningModule):
             "monitor": "val_loss"
         }
 
-    def forward(self, x: torch.Tensor, scale:int) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, scale:int=0) -> torch.Tensor:
         pred = self.model(x, scale)
         return pred
 

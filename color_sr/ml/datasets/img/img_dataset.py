@@ -21,15 +21,13 @@ class Image2ImageDataset(Dataset):
         if self.transform is not None:
             y = self.transform(y)
 
-        size=(y.shape[-2] // 3, y.shape[-1] // 3)
-        x = F.interpolate(y.unsqueeze(0), size=size, mode='bicubic').squeeze(0)
-        # path = self.paths_b[idx]
-        # y = F.in read_rgb_image(path)
-        # if self.transform is not None:
-            # y = self.transform(y)
+        path = self.paths_b[idx]
+        y = read_rgb_image(path)
+        if self.transform is not None:
+            y = self.transform(y)
 
-        # if self.p_transform is not None:
-            # x, y = self.p_transform(x, y)
+        if self.p_transform is not None:
+            x, y = self.p_transform(x, y)
 
         return x, y
 
