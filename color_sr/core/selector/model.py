@@ -1,7 +1,7 @@
 from ..config.model import ModelType, EncoderType, EncoderParams, HeadType, HeadParams
 from ..config import Config
 from typing import Union
-from color_sr.ml.models import (GSRKanModel, UnetEncoder, DETrEncoder, KANHead)
+from color_sr.ml.models import (GSRKanModel, UnetEncoder, DETrEncoder, CMEncoder, KANHead)
 
 
 class ModelSelector:
@@ -9,6 +9,11 @@ class ModelSelector:
     def encoder(config: Config) -> Union[UnetEncoder, DETrEncoder]:
         encoder_config = config.model.params.encoder
         match encoder_config.type:
+            case EncoderType.cm:
+                return CMEncoder(
+                    in_channels=encoder_config.in_channels,
+                    out_channels=encoder_config.out_channels,
+                )
             case EncoderType.unet:
                 return UnetEncoder(
                     in_channels=encoder_config.in_channels,

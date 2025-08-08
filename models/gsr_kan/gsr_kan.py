@@ -42,7 +42,7 @@ class GSRKan(nn.Module):
             # v = F.interpolate(v, m.shape[-2:], mode='bicubic')
             v = v.repeat_interleave(repeats=int(scale),dim=-1)
             v = v.repeat_interleave(repeats=int(scale),dim=-2)
-            # m = m * F.sigmoid(v)
+            m = m * F.sigmoid(v)
         
         # w = F.interpolate(w, m.shape[-2:], mode='bicubic')
         w = w.repeat_interleave(repeats=int(scale),dim=-1)

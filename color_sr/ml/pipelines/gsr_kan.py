@@ -83,8 +83,8 @@ class GSRKanPipeline(L.LightningModule):
     def training_step(self, batch, batch_idx):
         src, target = batch
         scale = target.shape[-1] / src.shape[-1]
-        predictions = self(src, scale)
-        mae_loss = self.mae_loss(predictions, target)
+        prediction = self(src, scale)
+        mae_loss = self.mae_loss(prediction, target)
 
         self.log('train_loss', mae_loss, prog_bar=True, logger=True)
         return {'loss': mae_loss}

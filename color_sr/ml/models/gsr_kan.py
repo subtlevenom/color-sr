@@ -1,2 +1,2 @@
-from models.gsr_kan import GSRKan as GSRKanModel, UnetEncoder, DETrEncoder, KANHead
+from models.gsr_kan import GSRKan as GSRKanModel, UnetEncoder, DETrEncoder, CMEncoder, KANHead
 

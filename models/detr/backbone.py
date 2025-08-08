@@ -75,7 +75,6 @@ class Backbone(BackboneBase):
             replace_stride_with_dilation=[False, False, dilation],
             pretrained=pretrained, norm_layer=FrozenBatchNorm2d)
         super().__init__(backbone)
-        
 
         num_channels = 960
         self.feed = nn.Conv2d(in_channels=num_channels,

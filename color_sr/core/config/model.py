@@ -21,6 +21,7 @@ class HSRModelParams(BaseModel):
 class EncoderType(str, Enum):
     detr = 'detr'
     unet = 'unet'
+    cm = 'cm'
 
 
 class HeadType(str, Enum):
@@ -34,6 +35,10 @@ class EncoderParams(BaseModel):
 class HeadParams(BaseModel):
     type: HeadType
 
+
+class CMEncoderParams(EncoderParams):
+    in_channels: int
+    out_channels: int
 
 class UnetEncoderParams(EncoderParams):
     in_channels: int
@@ -61,7 +66,7 @@ class KanHeadParams(HeadParams):
 
 
 class GSRModelParams(BaseModel):
-    encoder: Union[DETrEncoderParams]
+    encoder: Union[DETrEncoderParams, CMEncoderParams]
     head: Union[KanHeadParams]
 
 
