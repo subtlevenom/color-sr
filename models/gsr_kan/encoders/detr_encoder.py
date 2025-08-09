@@ -55,8 +55,8 @@ class DETrEncoder(nn.Module):
     def forward(self, x: torch.Tensor):
 
         features = self.backbone(x)
-        # mem = self.proj_mem(features)
-        # return {'w':mem, 'v':None}
+        mem = self.proj_mem(features)
+        return {'w':mem, 'v':None}
 
         B, C, H, W = features.shape
         features = rearrange(features, 'b (c i j) h w -> (b h w) c i j', i=self.K, j=self.K)

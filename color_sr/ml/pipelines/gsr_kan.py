@@ -115,7 +115,7 @@ class GSRKanPipeline(L.LightningModule):
         ssim_metric = self.ssim_metric(prediction, target)
         de_metric = self.de_metric(prediction, target)
 
-        self.log('test_panr', psnr_metric, prog_bar=True, logger=True)
+        self.log('test_psnr', psnr_metric, prog_bar=True, logger=True)
         self.log('test_ssim', ssim_metric, prog_bar=True, logger=True)
         self.log('test_de', de_metric, prog_bar=True, logger=True)
         self.log('test_loss', mae_loss, prog_bar=True, logger=True)

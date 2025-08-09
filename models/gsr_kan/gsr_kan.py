@@ -32,24 +32,26 @@ class GSRKan(nn.Module):
         if scale <= 0:
             scale = self.scale
 
-        enc:dict = self.forward_encoder(x)
+        B,C,H,W = x.shape
+        HS, WS = int(scale * H), int(scale * W)
+        # m = self.create_mesh(x,scale).to(x.device)
+        s = F.interpolate(x, (HS,WS), mode='bicubic')
+
+        enc:dict = self.forward_encoder(s)
         w = enc.get('w', None)
         v = enc.get('v', None)
 
-        m = self.create_mesh(x,scale).to(x.device)
-
-        if v is not None:
+        # if v is not None:
             # v = F.interpolate(v, m.shape[-2:], mode='bicubic')
-            v = v.repeat_interleave(repeats=int(scale),dim=-1)
-            v = v.repeat_interleave(repeats=int(scale),dim=-2)
-            m = m * F.sigmoid(v)
+            # v = v.repeat_interleave(repeats=int(scale),dim=-1)
+            # v = v.repeat_interleave(repeats=int(scale),dim=-2)
+            # m = m * F.sigmoid(v)
         
         # w = F.interpolate(w, m.shape[-2:], mode='bicubic')
-        w = w.repeat_interleave(repeats=int(scale),dim=-1)
-        w = w.repeat_interleave(repeats=int(scale),dim=-2)
+        # w = w.repeat_interleave(repeats=int(scale),dim=-1)
+        # w = w.repeat_interleave(repeats=int(scale),dim=-2)
 
-        s = F.interpolate(x, m.shape[-2:], mode='bicubic')
-        f = self.forward_head(m, w)
-        y = s + f 
+        # s = F.interpolate(x, m.shape[-2:], mode='bicubic')
+        y = self.forward_head(s, w)
 
         return y
