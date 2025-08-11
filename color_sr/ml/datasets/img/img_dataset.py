@@ -16,10 +16,10 @@ class Image2ImageDataset(Dataset):
         self.p_transform = p_transform
 
     def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
-        path = self.paths_b[idx]
-        y = read_rgb_image(path)
+        path = self.paths_a[idx]
+        x = read_rgb_image(path)
         if self.transform is not None:
-            y = self.transform(y)
+            x = self.transform(x)
 
         path = self.paths_b[idx]
         y = read_rgb_image(path)

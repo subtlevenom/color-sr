@@ -20,6 +20,7 @@ class HSRModelParams(BaseModel):
 
 class EncoderType(str, Enum):
     detr = 'detr'
+    conv = 'conv'
     unet = 'unet'
     cm = 'cm'
 
@@ -39,6 +40,12 @@ class HeadParams(BaseModel):
 class CMEncoderParams(EncoderParams):
     in_channels: int
     out_channels: int
+
+
+class ConvEncoderParams(EncoderParams):
+    in_channels: int
+    out_channels: int
+
 
 class UnetEncoderParams(EncoderParams):
     in_channels: int

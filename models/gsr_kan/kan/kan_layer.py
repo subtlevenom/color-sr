@@ -115,7 +115,7 @@ class WeightedResidualLayer:
         # Broadcast the input along out_dim of post_acts
         res = residual_weight * self.residual_fn(x[:, None, :])
         act = univariate_weight * post_acts
-        return act #res + act
+        return res + act
 
 
 class KANLayer:

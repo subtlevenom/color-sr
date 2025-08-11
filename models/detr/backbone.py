@@ -53,7 +53,7 @@ class FrozenBatchNorm2d(torch.nn.Module):
 
 class BackboneBase(nn.Module):
 
-    def __init__(self, backbone: nn.Module, layers: list = ['layer1','layer2','layer3','layer4']):
+    def __init__(self, backbone: nn.Module, layers: list = ['layer1','layer2']):
         super().__init__()
         layers = {n:n for n in layers}
         self.body = IntermediateLayerGetter(backbone, return_layers=layers)
@@ -76,7 +76,7 @@ class Backbone(BackboneBase):
             pretrained=pretrained, norm_layer=FrozenBatchNorm2d)
         super().__init__(backbone)
 
-        num_channels = 960
+        num_channels = 192
         self.feed = nn.Conv2d(in_channels=num_channels,
                               out_channels = out_channels,
                               kernel_size=1,

@@ -2,34 +2,33 @@ from typing import List
 import torch
 import torch.nn as nn
 import torchvision.models as models
+import torch.nn.functional as F
 import numpy as np
 import math
 from torchvision.transforms import Normalize
 import torch.utils.model_zoo as model_zoo
 import segmentation_models_pytorch as smp
+from ...detr import Backbone
 
 
-class ConvHead(nn.Module):
+class ConvEncoder(nn.Module):
 
-    def __init__(self, in_channels: int, out_channels: int = 2):
-        super(ConvHead, self).__init__()
+    def __init__(
+        self,
+        in_channels: int = 3,
+        w_channels: int = 60,
+        v_channels: int = 2,
+    ):
+        super(ConvEncoder, self).__init__()
 
-        self.conv = nn.Conv2d(in_channels,
-                              1,
-                              kernel_size=1,
-                              stride=1,
-                              padding=0)
-
-        self.feed = nn.Sequential(
-            nn.AdaptiveAvgPool2d(1),
-            nn.Conv2d(in_channels=in_channels,
-                      out_channels=out_channels,
-                      kernel_size=1),
-        )
+        self.w_channels = w_channels
+        self.v_channels = v_channels
+        self.backbone = Backbone(name='resnet18',
+                                 out_channels=w_channels + v_channels)
 
     def forward(self, x: torch.Tensor):
 
-        B, C, H, W = x.shape
-        y = self.conv(x)
-        x = self.feed(x * y)
-        return x.view((B, -1))
+        y = self.backbone(x)
+        w = y[:, :self.w_channels]
+        v = y[:, self.w_channels:]
+        return {'w': w, 'v': F.sigmoid(v)}

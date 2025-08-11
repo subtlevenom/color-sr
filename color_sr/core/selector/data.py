@@ -23,11 +23,11 @@ class DataSelector:
                 )
             case DataType.img:
                 dm = ImgDataModule(
-                    train_path=config.data.train.source,
+                    train_a=config.data.train.source,
                     train_b=config.data.train.target,
-                    val_path=config.data.val.source,
+                    val_a=config.data.val.source,
                     val_b=config.data.val.target,
-                    test_path=config.data.test.source,
+                    test_a=config.data.test.source,
                     test_b=config.data.test.target,
                     train_batch_size=config.pipeline.params.batch_size,
                     val_batch_size=config.pipeline.params.val_batch_size,

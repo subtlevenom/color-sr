@@ -26,7 +26,7 @@ class ImgDataModule(L.LightningDataModule):
             val_b: str,
             test_a: str,
             test_b: str,
-            batch_size: int = 32,
+            train_batch_size: int = 32,
             val_batch_size: int = 32,
             test_batch_size: int = 32,
             num_workers: int = min(12, os.cpu_count() - 1),
@@ -82,7 +82,7 @@ class ImgDataModule(L.LightningDataModule):
         self.test_paths_a = sorted(paths_a)
         self.test_paths_b = sorted(paths_b)
 
-        self.batch_size = batch_size
+        self.batch_size = train_batch_size
         self.val_batch_size = val_batch_size
         self.test_batch_size = test_batch_size
         self.image_p_transform = None
