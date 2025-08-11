@@ -2,6 +2,7 @@ from typing import List
 import torch
 import torch.nn as nn
 import torchvision.models as models
+import torch.nn.functional as F
 import numpy as np
 import math
 from torchvision.transforms import Normalize
@@ -12,7 +13,7 @@ class UnetEncoder(nn.Module):
 
     def __init__(self,
                  in_channels: int,
-                 out_channels: int,
+                 hidden_channels: List[int],
                  backbone='efficientnet-b2'):
         super(UnetEncoder, self).__init__()
 
@@ -22,23 +23,22 @@ class UnetEncoder(nn.Module):
             encoder_weights='imagenet',
             activation='sigmoid',
             in_channels=in_channels,
-            classes=out_channels,
         )
 
-    @property
-    def feature_channels(self):
-        return 352  # len(self.effunet.encoder.out_channels)
-
-    def encode(self, x: torch.Tensor) -> List[torch.Tensor]:
-        x = self.unet.encoder(x)
-        return x
-
-    def decode(self, x: List[torch.Tensor]) -> torch.Tensor:
-        x = self.unet.decoder(x)
-        x = self.unet.segmentation_head(x)
-        return x
+        proj_channels = [3,32,24] #[3,32,24,48,120,352]
+        self.projs = nn.ModuleList([
+            nn.Conv2d(
+                in_channels=in_ch,
+                out_channels=hid_ch,
+                kernel_size=1,
+                stride=1,
+                padding=0,
+            ) for in_ch, hid_ch in zip(proj_channels, hidden_channels)
+        ])
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = self.encode(x)
-        y = self.decode(x)
+        B,C,H,W = x.shape
+        x = self.unet.encoder(x)
+        y = [proj(f) for proj, f in zip(self.projs, x[:len(self.projs)])]
+        y = [F.interpolate(x, (H, W), mode='bicubic') for x in y]
         return {'w': y, 'v': None}

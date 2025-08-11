@@ -8,7 +8,7 @@ from ..kan.sep_kan_layer import SepKANLayer2D
 class KANHead(nn.Module):
 
     def __init__(self,
-                 in_channels: int = 2,
+                 in_channels: int = 3,
                  out_channels: int = 3,
                  grid_size: int = 5,
                  spline_order: int = 3,

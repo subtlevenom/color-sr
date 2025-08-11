@@ -1,1 +1,1 @@
-from .gsr_kan import GSRKanModel, UnetEncoder, DETrEncoder, ConvEncoder, CMEncoder, KANHead
+from .gsr_kan import GSRKanModel, UnetEncoder, DETrEncoder, ConvEncoder, CMEncoder, KANHead, MultiKANHead

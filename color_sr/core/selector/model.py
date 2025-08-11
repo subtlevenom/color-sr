@@ -1,12 +1,13 @@
+from torch import nn
 from ..config.model import ModelType, EncoderType, EncoderParams, HeadType, HeadParams
 from ..config import Config
 from typing import Union
-from color_sr.ml.models import (GSRKanModel, ConvEncoder, UnetEncoder, DETrEncoder, CMEncoder, KANHead)
+from color_sr.ml.models import (GSRKanModel, ConvEncoder, UnetEncoder, DETrEncoder, CMEncoder, KANHead, MultiKANHead)
 
 
 class ModelSelector:
 
-    def encoder(config: Config) -> Union[UnetEncoder, DETrEncoder]:
+    def encoder(config: Config, head: nn.Module) -> Union[UnetEncoder, DETrEncoder]:
         encoder_config = config.model.params.encoder
         match encoder_config.type:
             case EncoderType.cm:
@@ -24,7 +25,7 @@ class ModelSelector:
             case EncoderType.unet:
                 return UnetEncoder(
                     in_channels=encoder_config.in_channels,
-                    out_channels=encoder_config.out_channels,
+                    hidden_channels = head.kan_channels
                 )
             case EncoderType.detr:
                 head_config = config.model.params.head
@@ -51,6 +52,14 @@ class ModelSelector:
                                spline_order=head_config.spline_order,
                                residual_std=head_config.residual_std,
                                grid_range=head_config.grid_range)
+            case HeadType.multi_kan:
+                return MultiKANHead(in_channels=head_config.in_channels,
+                               out_channels=head_config.out_channels,
+                               hidden_channels=head_config.hidden_channels,
+                               grid_size=head_config.grid_size,
+                               spline_order=head_config.spline_order,
+                               residual_std=head_config.residual_std,
+                               grid_range=head_config.grid_range)
             case _:
                 raise ValueError(f'Unupported head type f{head_config.type}')
 
@@ -58,7 +67,7 @@ class ModelSelector:
         match config.model.type:
             case ModelType.gsr_kan:
                 head = ModelSelector.head(config)
-                encoder = ModelSelector.encoder(config)
+                encoder = ModelSelector.encoder(config, head)
                 return GSRKanModel(encoder=encoder, head=head, scale = config.data.scale)
             case _:
                 raise ValueError(f'Unupported model type f{config.model.type}')

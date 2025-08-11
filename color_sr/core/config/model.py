@@ -27,6 +27,7 @@ class EncoderType(str, Enum):
 
 class HeadType(str, Enum):
     kan = 'kan'
+    multi_kan = 'multi_kan'
 
 
 class EncoderParams(BaseModel):
@@ -49,7 +50,6 @@ class ConvEncoderParams(EncoderParams):
 
 class UnetEncoderParams(EncoderParams):
     in_channels: int
-    out_channels: int
 
 
 class DETrEncoderParams(EncoderParams):
@@ -71,10 +71,20 @@ class KanHeadParams(HeadParams):
     grid_range: list
     normalize: bool = True
 
+class MultiKanHeadParams(HeadParams):
+    in_channels: int
+    out_channels: int
+    hidden_channels: List[int]
+    grid_size: int
+    spline_order: int
+    residual_std: float
+    grid_range: list
+    normalize: bool = True
+
 
 class GSRModelParams(BaseModel):
-    encoder: Union[DETrEncoderParams, CMEncoderParams]
-    head: Union[KanHeadParams]
+    encoder: Union[DETrEncoderParams, CMEncoderParams, UnetEncoderParams]
+    head: Union[KanHeadParams, MultiKanHeadParams]
 
 
 # Model
