@@ -25,7 +25,8 @@ class ModelSelector:
             case EncoderType.unet:
                 return UnetEncoder(
                     in_channels=encoder_config.in_channels,
-                    hidden_channels = head.kan_channels
+                    out_channels = head.kan_size,
+                    backbone='resnet18'
                 )
             case EncoderType.detr:
                 head_config = config.model.params.head

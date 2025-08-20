@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from einops import rearrange
-from .mw_isp import DWTForward, RCAGroup, DWTInverse, seq
+from color_transfer.ml.layers.mw_isp import DWTForward, RCAGroup, DWTInverse, seq
 
 
 def to_3d(x):
@@ -251,7 +251,7 @@ class Encoder2D(torch.nn.Module):
         return x
 
 
-class CMEncoder(torch.nn.Module):
+class ConvSepKanEncoder(torch.nn.Module):
     """
     sepconv replace conv_out to reduce GFLOPS
     """
@@ -260,8 +260,7 @@ class CMEncoder(torch.nn.Module):
         super().__init__()
 
         MID_CHANNELS = 21 * in_channels
-        self.w_encoder = Encoder2D(in_channels, MID_CHANNELS, 3)
-        self.v_encoder = Encoder2D(in_channels, MID_CHANNELS, 3)
+        self.encoder = Encoder2D(in_channels, MID_CHANNELS, 3)
 
         self.norm1 = LayerNorm(MID_CHANNELS)
 
@@ -274,17 +273,17 @@ class CMEncoder(torch.nn.Module):
 
         self.norm2 = LayerNorm(MID_CHANNELS)
 
-        self.w_proj = FFN(in_features=MID_CHANNELS,
+        self.conv_reproj = FFN(in_features=MID_CHANNELS,
                                out_features=out_channels)
-        self.v_proj = FFN(in_features=MID_CHANNELS,
-                               out_features=3)
+        #self.conv_reproj = nn.Conv2d(in_channels=MID_CHANNELS, out_channels=out_channels, kernel_size=1)
 
-    def forward(self, s: torch.Tensor):
+    def forward(self, x: torch.Tensor):
 
-        B, C, H, W = s.shape
+        B, C, H, W = x.shape
 
         # forward projection
-        x = self.w_encoder(s)
+        x = self.encoder(x)
+
         x = self.norm1(x)
 
         # basis coeff
@@ -306,9 +305,6 @@ class CMEncoder(torch.nn.Module):
 
         # back projection
         x = self.norm2(y)
-        w = self.w_proj(x)
+        x = self.conv_reproj(x)
 
-        x = self.v_encoder(s)
-        v = self.v_proj(x)
-
-        return {'w':w, 'v':v}
+        return x

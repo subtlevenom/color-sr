@@ -73,7 +73,7 @@ class Backbone(BackboneBase):
     def __init__(self, name: str, out_channels:int, dilation:bool = False, pretrained:bool = True):
         backbone = getattr(torchvision.models, name)(
             replace_stride_with_dilation=[False, False, dilation],
-            pretrained=pretrained, norm_layer=FrozenBatchNorm2d)
+            pretrained=pretrained, norm_layer=nn.BatchNorm2d)
         super().__init__(backbone)
 
         num_channels = 192
