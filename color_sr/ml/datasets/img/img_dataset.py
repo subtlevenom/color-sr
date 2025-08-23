@@ -29,6 +29,12 @@ class Image2ImageDataset(Dataset):
         if self.p_transform is not None:
             x, y = self.p_transform(x, y)
 
+        # if x.shape[-1] % 4 > 0:
+            # x = F.interpolate(x.unsqueeze(0), (x.shape[-2], int(4 * (x.shape[-1] // 4))), mode='bicubic').squeeze(0)
+        # if x.shape[-2] % 4 > 0:
+            # x = F.interpolate(x.unsqueeze(0), (int(4 * (x.shape[-2] // 4)), x.shape[-1]), mode='bicubic').squeeze(0)
+        # y = F.interpolate(y.unsqueeze(0), (int(4 * x.shape[-2]), int(4 * x.shape[-1])), mode='bicubic').squeeze(0)
+
         return x, y
 
     def __len__(self) -> int:

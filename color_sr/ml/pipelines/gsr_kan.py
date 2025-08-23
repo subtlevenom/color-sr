@@ -123,5 +123,5 @@ class GSRKanPipeline(L.LightningModule):
 
     def predict_step(self, batch, batch_idx, dataloader_idx):
         src, _ = batch
-        output = self(src, scale=3)
+        output = self(src, scale=4)
         return output

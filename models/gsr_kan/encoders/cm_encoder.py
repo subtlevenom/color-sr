@@ -260,8 +260,7 @@ class CMEncoder(torch.nn.Module):
         super().__init__()
 
         MID_CHANNELS = 21 * in_channels
-        self.w_encoder = Encoder2D(in_channels, MID_CHANNELS, 3)
-        self.v_encoder = Encoder2D(in_channels, MID_CHANNELS, 3)
+        self.encoder = Encoder2D(in_channels, MID_CHANNELS, 3)
 
         self.norm1 = LayerNorm(MID_CHANNELS)
 
@@ -274,17 +273,15 @@ class CMEncoder(torch.nn.Module):
 
         self.norm2 = LayerNorm(MID_CHANNELS)
 
-        self.w_proj = FFN(in_features=MID_CHANNELS,
+        self.proj = FFN(in_features=MID_CHANNELS,
                                out_features=out_channels)
-        self.v_proj = FFN(in_features=MID_CHANNELS,
-                               out_features=3)
 
     def forward(self, s: torch.Tensor):
 
         B, C, H, W = s.shape
 
         # forward projection
-        x = self.w_encoder(s)
+        x = self.encoder(s)
         x = self.norm1(x)
 
         # basis coeff
@@ -306,9 +303,6 @@ class CMEncoder(torch.nn.Module):
 
         # back projection
         x = self.norm2(y)
-        w = self.w_proj(x)
+        w = self.proj(x)
 
-        x = self.v_encoder(s)
-        v = self.v_proj(x)
-
-        return {'w':w, 'v':v}
+        return {'w':w, 'v':None}
