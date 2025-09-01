@@ -3,6 +3,7 @@ from ..config.model import ModelType, EncoderType, EncoderParams, HeadType, Head
 from ..config import Config
 from typing import Union
 from color_sr.ml.models import (GSRKanModel, ConvEncoder, UnetEncoder, DETrEncoder, CMEncoder, KANHead, MultiKANHead)
+from models.ptnet import PTNet
 
 
 class ModelSelector:
@@ -67,6 +68,8 @@ class ModelSelector:
     def select(config: Config) -> Union[GSRKanModel]:
         match config.model.type:
             case ModelType.gsr_kan:
+                
+                return PTNet(in_channels=3, feat_channels=16, out_channels=3)
                 head = ModelSelector.head(config)
                 encoder = ModelSelector.encoder(config, head)
                 return GSRKanModel(encoder=encoder, head=head, scale = config.data.scale)
