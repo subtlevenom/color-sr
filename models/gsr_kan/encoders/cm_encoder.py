@@ -259,7 +259,7 @@ class CMEncoder(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
 
-        MID_CHANNELS = 21 * in_channels
+        MID_CHANNELS = 42 * in_channels
         self.encoder = Encoder2D(in_channels, MID_CHANNELS, 3)
 
         self.norm1 = LayerNorm(MID_CHANNELS)

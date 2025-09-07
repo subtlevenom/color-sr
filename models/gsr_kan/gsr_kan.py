@@ -1,25 +1,17 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from ..ptnet import PTNet
 
 
 class GSRKan(nn.Module):
 
     def __init__(self, encoder: nn.Module, head: nn.Module, scale:int):
         super(GSRKan, self).__init__()
-
+        
         self.encoder = encoder
         self.head = head
         self.scale = scale
-
-    def create_mesh(self, x:torch.Tensor, scale:int) -> torch.Tensor:
-        B,C,H,W = x.shape
-        xs = torch.linspace(0, 1, steps=int(scale))
-        ys = torch.linspace(0, 1, steps=int(scale))
-        y = torch.meshgrid(xs, xs, indexing='xy')
-        y = torch.stack(y)
-        y = y.repeat(B,1,H,W)
-        return y
 
     def forward_encoder(self, x) -> torch.Tensor:
         return self.encoder(x)
@@ -33,28 +25,21 @@ class GSRKan(nn.Module):
             scale = self.scale
 
         B,C,H,W = x.shape
-        H, W = int(scale * H), int(scale * W)
+        H_4,W_4 = H // 2, W // 2
+        H2,W2 = 2*H, 2*W
+        H4,W4 = 4*H, 4*W
+        x_4 = F.interpolate(x, (H_4, W_4), mode='bicubic')
+        x_4_s = F.interpolate(x_4, (H, W), mode='bicubic')
+        dx = x - x_4_s
+        dx = F.interpolate(dx, (H4, W4), mode='bicubic')
+        x4 = F.interpolate(x, (H4, W4), mode='bicubic')
         
-        y = F.interpolate(x, (H, W), mode='bicubic')
-        enc:dict = self.forward_encoder(y)
+        enc:dict = self.forward_encoder(x4)
 
         w = enc.get('w', None)
-        v = enc.get('v', None)
 
-        m = y
-        # y = self.create_mesh(x, scale).to(x.device)
+        y = self.head(dx,w)
 
-        if v is not None:
-            # v = F.interpolate(v, m.shape[-2:], mode='bicubic')
-            # v = v.repeat_interleave(repeats=int(scale),dim=-1)
-            # v = v.repeat_interleave(repeats=int(scale),dim=-2)
-            m = m * v
+        y = x4 + y
 
-        # w = F.interpolate(w, m.shape[-2:], mode='bicubic')
-        # w = w.repeat_interleave(repeats=int(scale),dim=-1)
-        # w = w.repeat_interleave(repeats=int(scale),dim=-2)
-
-        f = self.forward_head(m, w)
-        y = y + f
-
-        return y
+        return y 

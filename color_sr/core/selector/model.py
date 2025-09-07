@@ -45,15 +45,15 @@ class ModelSelector:
                 raise ValueError(f'Unupported encoder type f{encoder_config.type}')
 
     def head(config: HeadParams) -> Union[KANHead]:
-        head_config =config.model.params.head
+        head_config = config.model.params.head
         match head_config.type:
             case HeadType.kan:
                 return KANHead(in_channels=head_config.in_channels,
-                               out_channels=head_config.out_channels,
-                               grid_size=head_config.grid_size,
-                               spline_order=head_config.spline_order,
-                               residual_std=head_config.residual_std,
-                               grid_range=head_config.grid_range)
+                        out_channels=head_config.out_channels,
+                        grid_size=head_config.grid_size,
+                        spline_order=head_config.spline_order,
+                        residual_std=head_config.residual_std,
+                        grid_range=head_config.grid_range)
             case HeadType.multi_kan:
                 return MultiKANHead(in_channels=head_config.in_channels,
                                out_channels=head_config.out_channels,
@@ -68,8 +68,8 @@ class ModelSelector:
     def select(config: Config) -> Union[GSRKanModel]:
         match config.model.type:
             case ModelType.gsr_kan:
-                
-                return PTNet(in_channels=3, feat_channels=16, out_channels=3)
+
+                # return PTNet(in_channels=3, feat_channels=16, out_channels=3)
                 head = ModelSelector.head(config)
                 encoder = ModelSelector.encoder(config, head)
                 return GSRKanModel(encoder=encoder, head=head, scale = config.data.scale)

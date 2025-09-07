@@ -184,9 +184,15 @@ class PTEncoder(nn.Module):
         block = BasicBlock
 
         self.norm_layer = nn.BatchNorm2d
-        self.layer1 = self._make_layer(block=block, in_channels=in_channels, out_channels=64, blocks=4)
-        self.layer2 = self._make_layer(block=block, in_channels=64, out_channels=128, blocks=4)
-        self.ffn = FFN(in_features=128, out_features=out_channels)
+        self.layer1 = self._make_layer(block=block,
+                                       in_channels=in_channels,
+                                       out_channels=in_channels * 2,
+                                       blocks=4)
+        self.layer2 = self._make_layer(block=block,
+                                       in_channels=in_channels * 2,
+                                       out_channels=in_channels * 4,
+                                       blocks=4)
+        self.ffn = FFN(in_features=in_channels * 4, out_features=out_channels)
 
     def _make_layer(
         self,
@@ -217,59 +223,60 @@ class PTEncoder(nn.Module):
 
         return x
 
+
 class PTNet(nn.Module):
 
-    def __init__(self, in_channels: int, feat_channels:int, out_channels: int):
+    def __init__(self, in_channels: int, feat_channels: int,
+                 out_channels: int):
         super(PTNet, self).__init__()
-        
+
         scale = 4
-        N = 9
-        feat_channels = 8
-        d_model = feat_channels
-        nhead = 2
-        num_decoder_layers = 4
-        dim_feedforward = 32
-        dropout = 0.1
+        feat_channels = 32
+        ratio = 4
 
-        self.encoder1 = PTEncoder(in_channels=in_channels, out_channels=scale * scale * N * feat_channels)
-        self.encoder4 = PTEncoder(in_channels=in_channels, out_channels=N * feat_channels)
-
-        self.query_embed = PositionalEncoding(d_model)
-        self.pos_embed = PositionalEncoding(d_model)
-
-        self.transformer = Transformer(d_model=d_model,
-                                       nhead=nhead,
-                                       num_decoder_layers=num_decoder_layers,
-                                       dim_feedforward=dim_feedforward,
-                                       dropout=dropout)
-
-        self.decoder = PTEncoder(in_channels=N * feat_channels, out_channels=out_channels)
         self.scale = scale
-        self.N = N
 
-    def forward(self, x: torch.Tensor, scale:int=4):
+        self.encoder1 = PTEncoder(in_channels=in_channels,
+                                  out_channels=scale * scale * feat_channels)
+        self.encoder4 = PTEncoder(in_channels=in_channels,
+                                  out_channels=feat_channels)
+
+        self.conv_down = nn.Conv2d(
+            feat_channels,
+            feat_channels // ratio,
+            kernel_size=1,
+            stride=1,
+        )
+        self.conv_up = nn.Conv2d(
+            feat_channels // ratio,
+            feat_channels,
+            kernel_size=1,
+            stride=1,
+        )
+
+        self.ffn = FFN(in_features=feat_channels, out_features=out_channels)
+
+    def forward(self, x: torch.Tensor, scale: int = 4):
 
         scale = 4
-        B,C,H,W = x.shape
+        B, C, H, W = x.shape
         H4, W4 = scale * H, scale * W
 
-        x4 = F.interpolate(x, (H4,W4), mode='bicubic')
+        x4 = F.interpolate(x, (H4, W4), mode='bicubic')
 
         f1 = self.encoder1(x)
         f4 = self.encoder4(x4)
 
-        f1 = rearrange(f1, 'b (s r c) h w -> b c (s h) (r w)', s = self.scale, r = self.scale)
-        f1 = rearrange(f1, 'b (n c) h w -> n (b h w) c', n = self.N)
-        f4 = rearrange(f4, 'b (n c) h w -> n (b h w) c', n = self.N)
+        f1 = rearrange(f1,
+                       'b (s r c) h w -> b c (s h) (r w)',
+                       s=self.scale,
+                       r=self.scale)
 
-        query_embed = self.query_embed(f1)
-        pos_embed = self.pos_embed(f4)
+        # channel attention
+        f1 = F.relu(self.conv_down(f1))
+        f1 = F.sigmoid(self.conv_up(f1))
+        f4 = f1 * f4
 
-        hs, mem = self.transformer(f4, f1, None, query_embed, pos_embed)
-        
-        y = rearrange(hs, 'n (b h w) c -> b (n c) h w', h = H4, w = W4)
+        y = self.ffn(f4)
 
-        y = self.decoder(y)
-
-        return x4 + y
-
+        return y #x4 + y
