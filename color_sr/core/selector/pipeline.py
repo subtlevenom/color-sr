@@ -2,7 +2,7 @@ from ..config.pipeline import PipelineType
 from ..config import Config
 from typing import Union
 from color_sr.ml.pipelines import (
-    GSRKanPipeline,
+    DefaultPipeline,
 )
 from color_sr.ml.models import (
     GSRKanModel,
@@ -10,10 +10,10 @@ from color_sr.ml.models import (
 
 
 class PipelineSelector:
-    def select(config: Config, model: Union[GSRKanModel]) -> Union[GSRKanPipeline]:
+    def select(config: Config, model: Union[GSRKanModel]) -> Union[DefaultPipeline]:
         match config.pipeline.type:
             case PipelineType.gsr_kan:
-                return GSRKanPipeline(
+                return DefaultPipeline(
                     model=model,
                     optimiser=config.pipeline.params.optimizer,
                     lr=config.pipeline.params.lr,

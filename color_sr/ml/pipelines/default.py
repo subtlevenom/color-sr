@@ -7,7 +7,7 @@ from color_sr.core import Logger
 from ..metrics import (PSNR, SSIM, DeltaE)
 
 
-class GSRKanPipeline(L.LightningModule):
+class DefaultPipeline(L.LightningModule):
 
     def __init__(
         self,
@@ -16,7 +16,7 @@ class GSRKanPipeline(L.LightningModule):
         lr: float = 1e-3,
         weight_decay: float = 0,
     ) -> None:
-        super(GSRKanPipeline, self).__init__()
+        super(DefaultPipeline, self).__init__()
 
         self.model = model
         self.optimizer_type = optimiser

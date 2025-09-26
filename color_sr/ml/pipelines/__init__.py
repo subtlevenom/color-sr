@@ -1,1 +1,1 @@
-from .gsr_kan import GSRKanPipeline
+from .default import DefaultPipeline
