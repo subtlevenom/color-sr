@@ -4,14 +4,7 @@ from typing import Union
 
 
 class PipelineType(str, Enum):
-    odc = 'odc'
-    odc_face = 'odc_face'
-    odc_gaze = 'odc_gaze'
-    mpii = 'mpii'
-    gaze360 = 'gaze360'
-    gan = 'gan'
-    se = 'se'
-    se_swa = 'se_swa'
+    default = 'default'
 
 
 class PipelineParams(BaseModel):
@@ -32,7 +25,7 @@ class DefaultPipelineParams(PipelineParams):
 
 
 class Pipeline(BaseModel):
-    type: PipelineType = PipelineType.odc
+    type: PipelineType = PipelineType.default
     params: Union[
         DefaultPipelineParams,
     ] = DefaultPipelineParams()

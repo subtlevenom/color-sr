@@ -1,9 +1,8 @@
 import sys
-from openeye.ml.layers.fusion import FusionTR, FusionFFN
-from openeye.ml.layers.common import Flip
-from .gazenet.encoders import DETREncoder, TimmEncoder, UnetEncoder
-from .gazenet.heads import DETRHead, TRHead, KANHead, SimpleHead, GazeHead
-from .meta import Meta
+from color_sr.ml.layers.encoders import TimmEncoder, UnetEncoder
+from color_sr.ml.layers.fusion import FusionTR, FusionFFN
+from color_sr.ml.layers.common import Flip
+from .matrix import Matrix
 
 
 def create_model(name, params):

@@ -15,7 +15,8 @@ class UnetEncoder(nn.Module):
         self,
         backbone: str = 'efficientnet-b2',
         in_channels: int = 3,
-        out_channels: int = 489,
+        feature_channels: int = 489,
+        out_channels: int = 3,
         layers: int = 5,
         features_only: bool = False,
         **kwargs,
@@ -23,6 +24,7 @@ class UnetEncoder(nn.Module):
         super(UnetEncoder, self).__init__()
 
         self.in_channels = in_channels
+        self.feature_channels = feature_channels
         self.out_channels = out_channels
         self.features_only = features_only
 
@@ -32,17 +34,17 @@ class UnetEncoder(nn.Module):
             encoder_weights='imagenet',
             activation='sigmoid',
             in_channels=in_channels,
-            classes=in_channels,
+            classes=out_channels,
         )
 
         hidden_channels = self.unet.encoder.out_channels[-1]
 
-        if out_channels == hidden_channels:
+        if feature_channels == hidden_channels:
             self.out_proj = nn.Sequential()
         else:
             self.out_proj = nn.Conv2d(
                 in_channels=hidden_channels,
-                out_channels=out_channels,
+                out_channels=feature_channels,
                 kernel_size=1,
             )
 

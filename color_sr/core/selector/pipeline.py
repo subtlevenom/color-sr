@@ -5,14 +5,14 @@ from color_sr.ml.pipelines import (
     DefaultPipeline,
 )
 from color_sr.ml.models import (
-    GSRKanModel,
+    Matrix,
 )
 
 
 class PipelineSelector:
-    def select(config: Config, model: Union[GSRKanModel]) -> Union[DefaultPipeline]:
+    def select(config: Config, model: Union[Matrix]) -> Union[DefaultPipeline]:
         match config.pipeline.type:
-            case PipelineType.gsr_kan:
+            case PipelineType.default:
                 return DefaultPipeline(
                     model=model,
                     optimiser=config.pipeline.params.optimizer,

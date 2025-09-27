@@ -2,7 +2,7 @@ from ..config.model import Model
 from ..config import Config
 from typing import Union
 from torch import nn
-from openeye.ml.models import create_model, Meta
+from color_sr.ml.models import create_model, Matrix
 
 
 class ModelSelector:
@@ -14,4 +14,4 @@ class ModelSelector:
             for n, m in config.model.modules.items()
             if n in names
         }
-        return Meta(modules, config.model.metadata)
+        return Matrix(modules, config.model.metadata)

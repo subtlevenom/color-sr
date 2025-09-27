@@ -88,6 +88,7 @@ class FFN(nn.Module):
         self.act_layer = nn.Sigmoid()
 
     def forward(self, x):
+        B, C, H, W = x.shape
         y = self.pointwise1(x)
         y = self.depthwise(y)
         y = self.act_layer(y)
@@ -113,12 +114,15 @@ class FusionFFN(torch.nn.Module):
 
         # self.norms = nn.ModuleList([LayerNorm(ch) for ch in in_channels])
 
-        self.ffn = FFN(in_channels=hidden_channels, out_channels=out_channels)
+        S = 4
+        self.ffn = FFN(in_channels=hidden_channels, out_channels=S*S*out_channels)
+        self.pixel_shuffle = nn.PixelShuffle(S)
 
     def forward(self, *x: List[torch.Tensor]) -> torch.Tensor:
 
         # x = [norm(y) for norm, y in zip(self.norms, x)]
         x = torch.cat(x, dim=1)
         x = self.ffn(x)
+        x = self.pixel_shuffle(x)
 
         return x

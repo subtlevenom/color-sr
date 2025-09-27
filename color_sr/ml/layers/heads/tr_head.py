@@ -4,7 +4,7 @@ import fvcore.nn.weight_init as weight_init
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from openeye.ml.layers.transformer import TransformerEncoder, TransformerEncoderLayer, TransformerDecoderLayer, TransformerDecoder
+from color_sr.ml.layers.transformer import TransformerEncoder, TransformerEncoderLayer, TransformerDecoderLayer, TransformerDecoder
 
 
 class TRHead(nn.Module):

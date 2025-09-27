@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import lightning as L
 from torch import optim
-from ..models import GSRKanModel
+from ..models import Matrix
 from color_sr.core import Logger
 from ..metrics import (PSNR, SSIM, DeltaE)
 
@@ -11,7 +11,7 @@ class DefaultPipeline(L.LightningModule):
 
     def __init__(
         self,
-        model: GSRKanModel,
+        model: Matrix,
         optimiser: str = 'adam',
         lr: float = 1e-3,
         weight_decay: float = 0,
@@ -77,8 +77,8 @@ class DefaultPipeline(L.LightningModule):
         }
 
     def forward(self, x: torch.Tensor, scale:int=0) -> torch.Tensor:
-        pred = self.model(x, scale)
-        return pred
+        pred = self.model(image=x)
+        return pred['prediction']
 
     def training_step(self, batch, batch_idx):
         src, target = batch

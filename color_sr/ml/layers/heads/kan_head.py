@@ -3,8 +3,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import fvcore.nn.weight_init as weight_init
-from openeye.ml.layers.kan import SepKANLayer1D, SepKANLayer2D
-from openeye.ml.layers.transformer import TransformerEncoder, TransformerEncoderLayer, TransformerDecoderLayer, TransformerDecoder, PositionEmbeddingSine
+from color_sr.ml.layers.kan import SepKANLayer1D, SepKANLayer2D
+from color_sr.ml.layers.transformer import TransformerEncoder, TransformerEncoderLayer, TransformerDecoderLayer, TransformerDecoder, PositionEmbeddingSine
 
 
 class KANHead(nn.Module):
