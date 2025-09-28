@@ -15,3 +15,13 @@ pyyaml
 rich
 lightning
 pydantic
+graphkit
+einops
+imageio
+opencv-python
+pydantic
+PyYAML
+scikit-learn
+segmentation_models_pytorch
+timm
+rich

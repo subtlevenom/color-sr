@@ -1,4 +1,5 @@
 import argparse
+from omegaconf import DictConfig
 import yaml
 from ..core.selector import (
     ModelSelector,
@@ -17,34 +18,12 @@ from lightning.pytorch.callbacks import (
 from color_sr.ml.callbacks import GenerateCallback
 from lightning.pytorch.loggers import CSVLogger
 from color_sr import cli
+from .utils import print_rich
 
 
-def add_parser(subparser: argparse) -> None:
-    parser = subparser.add_parser(
-        "test",
-        help="Test color transfer model",
-        formatter_class=cli.ArgumentDefaultsRichHelpFormatter,
-    )
-    parser.add_argument(
-        "-c", "--config",
-        type=str,
-        help="Path to config file",
-        default="config.yaml",
-        required=False,
-    )
+def main(config: DictConfig) -> None:
+    print_rich(config)
 
-    parser.set_defaults(func=test)
-
-
-def test(args: argparse.Namespace) -> None:
-    print(f"Loading config from {args.config}")
-    with open(args.config, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
-
-    config = Config(**config)
-    print('Config:')
-    config.print()
-    
     dm = DataSelector.select(config)
     model = ModelSelector.select(config)
     pipeline = PipelineSelector.select(config, model)

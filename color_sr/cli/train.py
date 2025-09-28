@@ -1,5 +1,6 @@
 import argparse
 import yaml
+from omegaconf import DictConfig
 from ..core.selector import (ModelSelector, DataSelector, PipelineSelector)
 from ..core.config import Config
 import lightning as L
@@ -15,36 +16,13 @@ from lightning.pytorch.callbacks import (
 from color_sr.ml.callbacks import GenerateCallback
 from lightning.pytorch.loggers import CSVLogger
 from color_sr import cli
+from .utils import print_rich
 
 
-def add_parser(subparser: argparse) -> None:
-    parser = subparser.add_parser(
-        "train",
-        help="Train color transfer model",
-        formatter_class=cli.ArgumentDefaultsRichHelpFormatter,
-    )
-    parser.add_argument(
-        "-c",
-        "--config",
-        type=str,
-        help="Path to config file",
-        default="config.yaml",
-        required=False,
-    )
+def main(config: DictConfig) -> None:
+    print_rich(config)
 
-    parser.set_defaults(func=train)
-
-
-def train(args: argparse.Namespace) -> None:
-    print(f"Loading config from {args.config}")
-    with open(args.config, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
-
-    config = Config(**config)
-    print('Config:')
-    config.print()
-
-    if config.data.folds > 1:
+    if config.data.get('folds', 1) > 1:
         train_kfold(config)
     else:
         train_default(config)
