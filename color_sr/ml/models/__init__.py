@@ -2,7 +2,7 @@ import sys
 from color_sr.ml.layers.encoders import TimmEncoder, UnetEncoder
 from color_sr.ml.layers.fusion import FusionTR, FusionFFN
 from color_sr.ml.layers.common import Flip
-from .matrix import Matrix
+from .flow import Flow
 
 
 def create_model(name, params):

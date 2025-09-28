@@ -5,12 +5,12 @@ from color_sr.ml.pipelines import (
     DefaultPipeline,
 )
 from color_sr.ml.models import (
-    Matrix,
+    Flow,
 )
 
 
 class PipelineSelector:
-    def select(config: Config, model: Union[Matrix]) -> Union[DefaultPipeline]:
+    def select(config: Config, model: Union[Flow]) -> Union[DefaultPipeline]:
         match config.pipeline.type:
             case PipelineType.default:
                 return DefaultPipeline(

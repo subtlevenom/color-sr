@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import lightning as L
 from torch import optim
-from ..models import Matrix
+from ..models import Flow
 from color_sr.core import Logger
 from ..metrics import (PSNR, SSIM, DeltaE)
 
@@ -11,7 +11,7 @@ class DefaultPipeline(L.LightningModule):
 
     def __init__(
         self,
-        model: Matrix,
+        model: Flow,
         optimiser: str = 'adam',
         lr: float = 1e-3,
         weight_decay: float = 0,

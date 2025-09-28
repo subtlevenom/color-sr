@@ -3,10 +3,10 @@ from torch import nn
 import graphkit as gk
 
 
-class Matrix(nn.Module):
+class Flow(nn.Module):
 
     def __init__(self, modules: Dict[str, nn.Module], metadata: List):
-        super(Matrix, self).__init__()
+        super(Flow, self).__init__()
         self.nodes = nn.ModuleDict(modules)
         self.graph = self.compose(metadata)
 

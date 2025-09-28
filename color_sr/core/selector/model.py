@@ -2,7 +2,7 @@ from ..config.model import Model
 from ..config import Config
 from typing import Union
 from torch import nn
-from color_sr.ml.models import create_model, Matrix
+from color_sr.ml.models import create_model, Flow
 
 
 class ModelSelector:
@@ -14,4 +14,4 @@ class ModelSelector:
             for n, m in config.model.modules.items()
             if n in names
         }
-        return Matrix(modules, config.model.metadata)
+        return Flow(modules, config.model.metadata)
