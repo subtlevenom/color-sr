@@ -1,3 +1,4 @@
+from omegaconf import DictConfig
 from ..config.data import DataType
 from ..config import Config
 from typing import Union
@@ -9,7 +10,7 @@ from color_sr.ml.datasets import (
 
 
 class DataSelector:
-    def select(config: Config) -> Union[ImgDataModule]:
+    def select(config: DictConfig) -> Union[ImgDataModule]:
         match config.data.type:
             case DataType.scale:
                 dm = ScaleDataModule(

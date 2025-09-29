@@ -28,7 +28,7 @@ def main(config: DictConfig) -> None:
         train_default(config)
 
 
-def train_default(config: Config) -> None:
+def train_default(config: DictConfig) -> None:
 
     dm = DataSelector.select(config)
     model = ModelSelector.select(config)

@@ -1,3 +1,4 @@
+from omegaconf import DictConfig
 from ..config.model import Model
 from ..config import Config
 from typing import Union
@@ -7,7 +8,7 @@ from color_sr.ml.models import create_model, Flow
 
 class ModelSelector:
 
-    def select(config: Config) -> nn.Module:
+    def select(config: DictConfig) -> nn.Module:
         names = [m.module for m in config.model.metadata]
         modules = {
             n: create_model(m.model, m.params)

@@ -1,18 +1,19 @@
 from pathlib import Path
 import importlib
+from typing import Callable
 from .rich_argparse import (
     RichHelpFormatter,
     ArgumentDefaultsRichHelpFormatter,
 )
 
 
-def register_parsers(subparser):
-    """Adds modules parsers to subparser"""
+def register_task(task) -> Callable:
+    """Gets entry point for task"""
 
-    modules: list = []
-    for module_path in Path(__file__).parent.glob('*.py'):
-        module = importlib.import_module('.' + module_path.stem, __name__)
+    module_path = list(Path(__file__).parent.glob(f'{task}.py'))
+    if len(module_path) == 1:
+        module = importlib.import_module('.' + module_path[0].stem, __name__)
         if getattr(module, 'main', None) is not None:
-            # module.add_parser(subparser)
-            modules.append(module)
-    return modules
+            return module.main
+
+    raise Exception(f'Module for task {task} not found.')
