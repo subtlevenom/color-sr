@@ -18,9 +18,9 @@ class DataSelector:
                     val_path=config.data.val.source,
                     test_path=config.data.test.source,
                     scale=config.data.scale,
-                    train_batch_size=config.pipeline.params.batch_size,
-                    val_batch_size=config.pipeline.params.val_batch_size,
-                    test_batch_size=config.pipeline.params.test_batch_size,
+                    train_batch_size=config.pipeline.batch_size,
+                    val_batch_size=config.pipeline.val_batch_size,
+                    test_batch_size=config.pipeline.test_batch_size,
                 )
             case DataType.img:
                 dm = ImgDataModule(
