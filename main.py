@@ -2,8 +2,8 @@ import argparse
 from typing import Optional
 import hydra
 from omegaconf import DictConfig, OmegaConf
-from color_sr.core import logger
-from color_sr import cli
+from flows.core import logger
+from flows import cli
 
 
 @hydra.main(version_base='1.1.0', config_path='config', config_name='config')
