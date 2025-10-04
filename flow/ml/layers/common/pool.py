@@ -11,4 +11,5 @@ class Pool(torch.nn.Module):
 
     def forward(self, x: torch.Tensor):
         x = F.adaptive_avg_pool2d(x, output_size=1)
-        return x.flatten(start_dim=1)
+        x = x.flatten(start_dim=1)
+        return x
