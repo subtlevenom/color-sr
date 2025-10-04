@@ -7,17 +7,17 @@ class Flow(nn.Module):
 
     def __init__(self, modules: Dict[str, nn.Module], metadata: List):
         super(Flow, self).__init__()
-        self.nodes = nn.ModuleDict(modules)
+        self.layers = nn.ModuleDict(modules)
         self.graph = self.compose(metadata)
 
     def compose(self, metadata):
         ops = [
             gk.operation(
-                name=f'{i}.{m.module}', needs=m.inputs,
-                provides=m.outputs)(self.nodes[m.module])
+                name=f'{i}.{m.module}', needs=list(m.inputs),
+                provides=list(m.outputs))(self.layers[m.module])
             for i, m in enumerate(metadata)
         ]
-        return gk.compose(name='Matrix')(*ops)
+        return gk.compose(name='Flow')(*ops)
 
     def forward(self, **kwargs):
         return self.graph(kwargs)

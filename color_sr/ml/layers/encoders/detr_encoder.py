@@ -8,7 +8,7 @@ import math
 from torchvision.transforms import Normalize
 import torch.utils.model_zoo as model_zoo
 import segmentation_models_pytorch as smp
-from color_sr.ml.layers.transformer import TransformerEncoder, TransformerEncoderLayer
+from openeye.ml.layers.transformer import TransformerEncoder, TransformerEncoderLayer
 
 
 class DETREncoder(nn.Module):

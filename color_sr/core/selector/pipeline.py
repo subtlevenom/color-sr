@@ -1,24 +1,13 @@
 from omegaconf import DictConfig
+import lightning as L
+from torch import nn
 from ..config.pipeline import PipelineType
 from ..config import Config
 from typing import Union
-from color_sr.ml.pipelines import (
-    DefaultPipeline,
-)
-from color_sr.ml.models import (
-    Flow,
-)
+from openeye.ml.pipelines import create_pipeline
 
 
 class PipelineSelector:
-    def select(config: DictConfig, model: Union[Flow]) -> Union[DefaultPipeline]:
-        match config.pipeline.type:
-            case PipelineType.default:
-                return DefaultPipeline(
-                    model=model,
-                    optimiser=config.pipeline.optimizer,
-                    lr=config.pipeline.lr,
-                    weight_decay=config.pipeline.weight_decay
-                )
-            case _:
-                raise ValueError(f'Unupported pipeline type f{config.pipeline.type}')
+    def select(model: nn.Module, config: DictConfig) -> L.LightningModule:
+        model = create_pipeline(config.name, model, config.params)
+        return model

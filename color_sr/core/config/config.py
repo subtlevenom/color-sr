@@ -1,4 +1,5 @@
-from typing import Union
+from typing import Union, List
+from typing_extensions import Optional
 from pydantic import BaseModel
 
 from rich.syntax import Syntax
@@ -12,13 +13,14 @@ import yaml
 
 
 class Config(BaseModel):
-    experiment: str = 'gsr_kan'
+    experiment: str = 'odc'
     save_dir: str = '.experiments'
     resume: bool = False
     model: Model
     data: Data
     pipeline: Pipeline = Pipeline()
     accelerator: Union[str,int] = 'gpu'
+    devices: Union[int,List[int]] = [0,1]
 
     def print(self) -> None:
         str = yaml.dump(self.model_dump())
