@@ -12,7 +12,7 @@ from torchvision.transforms.v2 import (
 )
 from torch.utils.data import DataLoader, ConcatDataset
 from typing import Tuple
-from color_sr.core import Logger
+from flows.core import Logger
 from sklearn.model_selection import KFold
 from torch.utils.data import DataLoader, Subset
 

@@ -12,8 +12,8 @@ from torchvision.transforms.v2 import (
 from torch.utils.data import DataLoader
 from typing import Tuple
 from .scale_dataset import Image2ImageDataset
-from color_sr.core import Logger
-from color_sr.ml.transforms.pair_trransform import PairTransform
+from flows.core import Logger
+from flows.ml.transforms.pair_trransform import PairTransform
 
 CROP = 256
 

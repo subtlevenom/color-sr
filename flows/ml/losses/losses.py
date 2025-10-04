@@ -191,11 +191,11 @@ class PerceptualLoss(nn.Module):
         self.perceptual_weight = perceptual_weight
         self.style_weight = style_weight
         self.layer_weights = layer_weights
-        self.vgg = VGGFeatureExtractor(layer_name_list=list(
-            layer_weights.keys()),
-                                       vgg_type=vgg_type,
-                                       use_input_norm=use_input_norm,
-                                       range_norm=range_norm)
+        self.vgg = None #VGGFeatureExtractor(layer_name_list=list(
+            # layer_weights.keys()),
+                                    #    vgg_type=vgg_type,
+                                    #    use_input_norm=use_input_norm,
+                                    #    range_norm=range_norm)
 
         self.criterion_type = criterion
         if self.criterion_type == 'l1':
