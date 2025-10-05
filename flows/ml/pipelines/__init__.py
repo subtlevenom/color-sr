@@ -1,8 +1,6 @@
 import sys, inspect
 import lightning as L
 from . import default
-from . import gaze
-from . import origin
 
 
 def create_pipeline(name, model, params) -> L.LightningModule:

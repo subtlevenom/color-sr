@@ -6,7 +6,6 @@ from ..core.selector import (
     DataSelector,
     PipelineSelector
 )
-from ..core.config import Config
 import lightning as L
 import os
 from lightning.pytorch.callbacks import (
@@ -24,9 +23,9 @@ from .utils import print_rich
 def main(config: DictConfig) -> None:
     print_rich(config)
 
-    dm = DataSelector.select(config)
-    model = ModelSelector.select(config)
-    pipeline = PipelineSelector.select(config, model)
+    dm = DataSelector.select(config.data)
+    model = ModelSelector.select(config.model)
+    pipeline = PipelineSelector.select(model, config.pipeline)
 
     logger = CSVLogger(
         save_dir=os.path.join(config.save_dir, config.experiment),

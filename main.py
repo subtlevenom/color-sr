@@ -1,4 +1,5 @@
 import argparse
+import sys
 from typing import Optional
 import hydra
 from omegaconf import DictConfig, OmegaConf
@@ -13,4 +14,6 @@ def main(cfg: DictConfig) -> Optional[float]:
 
 
 if __name__ == '__main__':
+    # fixes hydra changing cwd
+    sys.argv.append('hydra.job.chdir=False')
     main()

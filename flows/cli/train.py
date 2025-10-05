@@ -2,7 +2,6 @@ import argparse
 import yaml
 from omegaconf import DictConfig
 from ..core.selector import (ModelSelector, DataSelector, PipelineSelector)
-from ..core.config import Config
 import lightning as L
 import os
 import torch
@@ -30,9 +29,9 @@ def main(config: DictConfig) -> None:
 
 def train_default(config: DictConfig) -> None:
 
-    dm = DataSelector.select(config)
-    model = ModelSelector.select(config)
-    pipeline = PipelineSelector.select(config, model)
+    dm = DataSelector.select(config.data)
+    model = ModelSelector.select(config.model)
+    pipeline = PipelineSelector.select(model, config.pipeline)
 
     logger = CSVLogger(
         save_dir=os.path.join(config.save_dir, config.experiment),
@@ -43,7 +42,7 @@ def train_default(config: DictConfig) -> None:
     trainer = L.Trainer(
         logger=logger,
         default_root_dir=os.path.join(config.save_dir, config.experiment),
-        max_epochs=config.pipeline.params.epochs,
+        max_epochs=config.epochs,
         devices=1,
         callbacks=[
             ModelCheckpoint(
@@ -70,13 +69,13 @@ def train_default(config: DictConfig) -> None:
     )
 
 
-def train_kfold(config: Config) -> None:
+def train_kfold(config: DictConfig) -> None:
 
     FOLD_STEPS = 10
 
-    dm: L.LightningDataModule = DataSelector.select(config)
-    model = ModelSelector.select(config)
-    pipeline = PipelineSelector.select(config, model)
+    dm = DataSelector.select(config.data)
+    model = ModelSelector.select(config.model)
+    pipeline = PipelineSelector.select(model, config.pipeline)
 
     logger = CSVLogger(
         save_dir=os.path.join(config.save_dir, config.experiment),
@@ -94,7 +93,7 @@ def train_kfold(config: Config) -> None:
         ckpt_path = None
         current_epoch = 0
 
-    while current_epoch < config.pipeline.params.epochs:
+    while current_epoch < config.epochs:
         for fold, data_module in enumerate(dm):
             print(f'Fold {fold + 1}')
 

@@ -12,14 +12,14 @@ class DefaultPipeline(L.LightningModule):
     def __init__(
         self,
         model: Flow,
-        optimiser: str = 'adam',
+        optimizer: str = 'adam',
         lr: float = 1e-3,
         weight_decay: float = 0,
     ) -> None:
         super(DefaultPipeline, self).__init__()
 
         self.model = model
-        self.optimizer_type = optimiser
+        self.optimizer_type = optimizer
         self.lr = lr
         self.weight_decay = weight_decay
         self.mae_loss = nn.L1Loss(reduction='mean')
@@ -78,7 +78,7 @@ class DefaultPipeline(L.LightningModule):
 
     def forward(self, x: torch.Tensor, scale:int=0) -> torch.Tensor:
         pred = self.model(image=x)
-        return pred['prediction']
+        return pred['result']
 
     def training_step(self, batch, batch_idx):
         src, target = batch

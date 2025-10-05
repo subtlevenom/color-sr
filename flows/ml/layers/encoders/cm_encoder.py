@@ -307,4 +307,4 @@ class CMEncoder(torch.nn.Module):
         x = self.norm2(y)
         x = self.conv_reproj(x)
 
-        return {'w': x, 'v': None}
+        return x

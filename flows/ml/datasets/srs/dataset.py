@@ -1,13 +1,13 @@
 import torch
 from torch.utils.data import Dataset
 import torch.nn.functional as F
-from color_sr.ml.utils.io import read_rgb_image
+from flows.ml.utils.io import read_rgb_image
 from typing import List
 from torchvision.transforms.v2 import Compose
-from color_sr.ml.transforms.pair_trransform import PairTransform
+from flows.ml.transforms.pair_trransform import PairTransform
 
 
-class Image2ImageDataset(Dataset):
+class Dataset(Dataset):
     def __init__(self, img_paths: List[str], scale:int, transform: Compose, p_transform: PairTransform = None) -> None:
         self.img_paths = img_paths
         self.scale = scale
