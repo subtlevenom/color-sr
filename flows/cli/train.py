@@ -15,11 +15,11 @@ from lightning.pytorch.callbacks import (
 from flows.ml.callbacks import GenerateCallback
 from lightning.pytorch.loggers import CSVLogger
 from flows import cli
-from .utils import print_rich
+from tools.utils import text
 
 
 def main(config: DictConfig) -> None:
-    print_rich(config)
+    text.print(config)
 
     if config.data.get('folds', 1) > 1:
         train_kfold(config)

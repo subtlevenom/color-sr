@@ -17,7 +17,7 @@ from lightning.pytorch.callbacks import (
 from flows.ml.callbacks import GenerateCallback
 from lightning.pytorch.loggers import CSVLogger
 from flows import cli
-from .utils import print_rich
+from ...tools.utils.concurrent import print_rich
 
 
 def main(config: DictConfig) -> None:

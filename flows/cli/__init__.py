@@ -1,10 +1,6 @@
 from pathlib import Path
 import importlib
 from typing import Callable
-from .rich_argparse import (
-    RichHelpFormatter,
-    ArgumentDefaultsRichHelpFormatter,
-)
 
 
 def register_task(task) -> Callable:
