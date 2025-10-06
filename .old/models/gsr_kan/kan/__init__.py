@@ -1,1 +1,0 @@
-from .sep_kan_layer import SepKANLayer1D, SepKANLayer2D

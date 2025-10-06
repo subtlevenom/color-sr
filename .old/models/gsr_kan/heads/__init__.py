@@ -1,1 +1,0 @@
-from .kan_head import KANHead
