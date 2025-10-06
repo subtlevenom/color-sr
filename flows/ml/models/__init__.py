@@ -1,21 +1,16 @@
-import sys
+import sys, pkgutil, importlib, inspect
 from torch import nn
-from torch.nn import *
-from flows.ml.layers.common import * #Flip, Pool, concat
-from flows.ml.layers.fusion import * #FusionTR, FusionAtt, FusionConv
-from flows.ml.layers.feed import * #ConvBlock, ResSENet, SENet, SepConvAtt
-from flows.ml.layers.encoders import * #CMEncoder, DETREncoder, TimmEncoder, SmpEncoder
-from flows.ml.layers.heads import * #DETRHead, TRHead, SimpleHead
-from .sr.heads import *
-from .sr.encoders import *
-from .hs import *
+from flows.ml import layers
+from . import hs, sr
 from .flow import Flow
 
 
-def create_layer(name, params) -> nn.Module:
+def create_layer(name: str, params) -> nn.Module:
     params = params or {}
-    pkg = sys.modules[__name__]
-    cls = getattr(pkg, name)
+    name = name.strip('. ')
+    cls = sys.modules[__name__]
+    for s in name.split('.'):
+        cls = getattr(cls, s)
     return cls(**params)
 
 

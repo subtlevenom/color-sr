@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import fvcore.nn.weight_init as weight_init
-from ..kan.sep_kan_layer import SepKANLayer2D
+from flows.ml.layers.kan import SepKANLayer2D
 
 
 class KANHead(nn.Module):
