@@ -9,6 +9,7 @@ import imageio
 import albumentations as A
 from omegaconf import DictConfig
 from tools.utils.concurrent import concurrent
+from scipy import io
 
 THREADS = 1
 
@@ -16,7 +17,7 @@ SOURCE = 'source'
 TARGET = 'target'
 
 
-def sample_dataset(config: DictConfig) -> None:
+def sample(config: DictConfig) -> None:
     input_dir = Path(config.input)
     output_dir = Path(config.output)
 
@@ -28,6 +29,9 @@ def sample_dataset(config: DictConfig) -> None:
     n_files = len(files)
     random.seed(config.seed)
     random.shuffle(files)
+    for f in files:
+        x = io.loadmat(f)
+        print(x)
 
     # split files into buckets
     file_split = np.cumsum([int(p * n_files) for p in config.split.values()])
