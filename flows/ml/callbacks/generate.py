@@ -38,7 +38,7 @@ class GenerateCallback(Callback):
             # Save image
             save_path = os.path.join(self.save_dir, f"reconst_{trainer.current_epoch}.png")
             os.makedirs(self.save_dir, exist_ok=True)
-            torchvision.utils.save_image(grid, save_path)
+            # torchvision.utils.save_image(grid, save_path)
 
     def on_test_start(self, trainer: Trainer, pl_module: LightningModule) -> None:
         dataloader = trainer.test_dataloaders

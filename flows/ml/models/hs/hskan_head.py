@@ -5,36 +5,24 @@ import fvcore.nn.weight_init as weight_init
 from flows.ml.layers.kan import SepKANLayer2D
 
 
-class KANHead(nn.Module):
+class HSKANHead(nn.Module):
 
     def __init__(self,
-                 in_channels: int = 2,
-                 out_channels: int = 3,
-                 grid_size: int = 5,
-                 spline_order: int = 3,
-                 residual_std: float = 0.1,
-                 grid_range: list = [0, 1]):
-        super(KANHead, self).__init__()
+                 in_channels: int = 31,
+                 out_channels: int = 50,):
+        super(HSKANHead, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
 
-        self.kan_decoder = SepKANLayer2D(in_channels=in_channels,
-                                         out_channels=out_channels,
-                                         grid_size=grid_size,
-                                         spline_order=spline_order,
-                                         residual_std=residual_std,
-                                         grid_range=grid_range)
+        self.unshuffle = nn.PixelUnshuffle(4)
+        self.proj = nn.Conv2d(
+                in_channels=4*4*3,
+                out_channels=out_channels,
+                kernel_size=1,
+            )
 
-        self.kan_size = self.kan_decoder.size
-
-        self._reset_parameters()
-
-    def _reset_parameters(self):
-        for p in self.parameters():
-            if p.dim() > 1:
-                nn.init.xavier_uniform_(p)
-
-    def forward(self, x: torch.Tensor, w: torch.Tensor):
-
-        return self.kan_decoder(x, w)
+    def forward(self, s: torch.Tensor, x: torch.Tensor):
+        x = self.unshuffle(x)
+        x = self.proj(x)
+        return s + x

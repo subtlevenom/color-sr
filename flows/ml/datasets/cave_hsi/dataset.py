@@ -18,11 +18,13 @@ class Dataset(Dataset):
     def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
         path = self.paths_a[idx]
         x = np.load(path)
+        x = (x-np.min(x))/(np.max(x)-np.min(x))
         if self.transform is not None:
             x = self.transform(x)
 
         path = self.paths_b[idx]
         y = np.load(path)
+        y = (y-np.min(y))/(np.max(y)-np.min(y))
         if self.transform is not None:
             y = self.transform(y)
 

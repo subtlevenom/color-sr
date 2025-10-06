@@ -47,7 +47,7 @@ def train_default(config: DictConfig) -> None:
         callbacks=[
             ModelCheckpoint(
                 filename="{epoch}-{val_de:.2f}",
-                monitor='val_de',
+                monitor='val_psnr',
                 save_last=True,
             ),
             RichModelSummary(),
