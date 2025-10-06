@@ -1,12 +1,14 @@
 import sys
 from torch import nn
 from torch.nn import *
-from flows.ml.layers import * #Flip, Pool, concat
-# from flows.ml.layers.common import * #Flip, Pool, concat
-# from flows.ml.layers.fusion import * #FusionTR, FusionAtt, FusionConv
-# from flows.ml.layers.feed import * #ConvBlock, ResSENet, SENet, SepConvAtt
-# from flows.ml.layers.encoders import * #CMEncoder, DETREncoder, TimmEncoder, SmpEncoder
-# from flows.ml.layers.heads import * #DETRHead, TRHead, SimpleHead
+from flows.ml.layers.common import * #Flip, Pool, concat
+from flows.ml.layers.fusion import * #FusionTR, FusionAtt, FusionConv
+from flows.ml.layers.feed import * #ConvBlock, ResSENet, SENet, SepConvAtt
+from flows.ml.layers.encoders import * #CMEncoder, DETREncoder, TimmEncoder, SmpEncoder
+from flows.ml.layers.heads import * #DETRHead, TRHead, SimpleHead
+from .sr.heads import *
+from .sr.encoders import *
+from .hs import *
 from .flow import Flow
 
 
