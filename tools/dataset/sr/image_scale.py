@@ -9,7 +9,6 @@ import imageio
 import albumentations as A
 from omegaconf import DictConfig
 from tools.utils.concurrent import concurrent
-from scipy import io
 
 THREADS = 1
 
@@ -18,6 +17,11 @@ TARGET = 'target'
 
 
 def sample(config: DictConfig) -> None:
+    """
+    Target images sourced from the input folder, patched with crop_size
+    Source images are targets scaled with bicubic
+    """
+
     input_dir = Path(config.input)
     output_dir = Path(config.output)
 
@@ -29,9 +33,6 @@ def sample(config: DictConfig) -> None:
     n_files = len(files)
     random.seed(config.seed)
     random.shuffle(files)
-    for f in files:
-        x = io.loadmat(f)
-        print(x)
 
     # split files into buckets
     file_split = np.cumsum([int(p * n_files) for p in config.split.values()])
@@ -39,11 +40,11 @@ def sample(config: DictConfig) -> None:
 
     splits = {}
     for name, files in zip(config.split.keys(), file_split):
-        src_dir = output_dir.joinpath(name, 'source')
-        tgt_dir = output_dir.joinpath(name, 'target')
+        src_dir = output_dir.joinpath(name, SOURCE)
+        tgt_dir = output_dir.joinpath(name, TARGET)
         src_dir.mkdir(parents=True, exist_ok=True)
         tgt_dir.mkdir(parents=True, exist_ok=True)
-        splits[name] = {'source': src_dir, 'target': tgt_dir, 'files': files}
+        splits[name] = {SOURCE: src_dir, TARGET: tgt_dir, 'files': files}
 
     tasks = []
     with Progress() as progress:
@@ -54,8 +55,8 @@ def sample(config: DictConfig) -> None:
                 split_tasks = [
                     _prepare_data(executor,
                                   input_dir=input_dir,
-                                  output_source_dir=split_data['source'],
-                                  output_target_dir=split_data['target'],
+                                  output_source_dir=split_data[SOURCE],
+                                  output_target_dir=split_data[TARGET],
                                   filename=filename.name,
                                   params=config.params)
                     for filename in split_data['files']
