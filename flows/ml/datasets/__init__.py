@@ -1,6 +1,6 @@
 import sys, inspect
 import lightning as L
-from . import srs, kfold, sri, hsi
+from . import srs, kfold, sri, cave_hsi
 
 
 def create_dataset(name, params) -> L.LightningDataModule:

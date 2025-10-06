@@ -1,7 +1,7 @@
+import numpy as np
 import torch
 from torch.utils.data import Dataset
 import torch.nn.functional as F
-from flows.ml.utils.io import read_rgb_image
 from typing import List
 from torchvision.transforms.v2 import Compose
 from flows.ml.transforms.pair_trransform import PairTransform
@@ -17,12 +17,12 @@ class Dataset(Dataset):
 
     def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
         path = self.paths_a[idx]
-        x = read_rgb_image(path)
+        x = np.load(path)
         if self.transform is not None:
             x = self.transform(x)
 
         path = self.paths_b[idx]
-        y = read_rgb_image(path)
+        y = np.load(path)
         if self.transform is not None:
             y = self.transform(y)
 

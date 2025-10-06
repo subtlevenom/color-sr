@@ -89,10 +89,10 @@ def _copy_data(
     for i in range(n_crops):
         try:
             if random_crop:
-                save_name = input_file.stem + f'_{i}' + input_file.suffix
+                save_name = input_file.stem + f'_{i}'
                 img = random_crop(image=image)['image']
             else:
-                save_name = input_file.name
+                save_name = input_file.stem
                 img = image
             save_path = output_dir.joinpath(save_name)
             np.save(save_path, img)

@@ -16,18 +16,21 @@ from flows.core import Logger
 from flows.ml.transforms.pair_trransform import PairTransform
 
 CROP = 256
-IMG_EXTS: Tuple[str] = (".png", ".jpg")
+IMG_EXTS: Tuple[str] = (".npy")
 
 class DataModule(L.LightningDataModule):
     def __init__(
             self,
             train: dict,
-            val: dict,
-            test: dict,
+            val: dict = None,
+            test: dict = None,
             num_workers: int = min(12, os.cpu_count() - 2),
             seed: int = 43,
     ) -> None:
         super().__init__()
+
+        val = val or train
+        test = test or val
 
         self.test_dataset = None
         self.train_dataset = None
@@ -80,14 +83,14 @@ class DataModule(L.LightningDataModule):
         self.batch_size = train.batch_size
         self.val_batch_size = val.batch_size
         self.test_batch_size = test.batch_size
-        # self.image_p_transform = None
-        self.image_p_transform = PairTransform(
-            crop_size=CROP, p=0.5, seed=seed
-        )
-        # self.val_image_p_transform = None
-        self.val_image_p_transform = PairTransform(
-            crop_size=CROP, p=0.0, seed=seed
-        )
+        self.image_p_transform = None
+        # self.image_p_transform = PairTransform(
+            # crop_size=CROP, p=0.5, seed=seed
+        # )
+        self.val_image_p_transform = None
+        # self.val_image_p_transform = PairTransform(
+            # crop_size=CROP, p=0.0, seed=seed
+        # )
 
         self.image_train_transform = Compose([
             ToImage(),
