@@ -25,4 +25,5 @@ class HSKANHead(nn.Module):
     def forward(self, s: torch.Tensor, x: torch.Tensor):
         x = self.unshuffle(x)
         x = self.proj(x)
-        return s + x
+        x = s + F.tanh(x)
+        return torch.clamp(x, min=0.0, max=1.0)
